@@ -29,9 +29,24 @@
             'end_date' => $end_date,
         ];
     
-        if(empty($certificate_title) || empty($certificate_desc) ||
-        empty($certificate_company) || empty($start_date) || empty($end_date)){
-            $errors[] = 'Some fields are empty! Fill them with data to proceed...';
+        if(empty($certificate_title)){
+            $errors[] = 'Certificate Title is empty!';
+        }
+        if(empty(strlen(trim($certificate_desc)))){
+            $errors[] = 'Certificate Description is empty!';
+        }
+        if(empty($certificate_company)){
+            $errors[] = 'Certificate Company is empty!';
+        }
+        if(empty($start_date)){
+            $errors[] = 'Start-date Tools is empty!';
+        }
+        if(empty($end_date)){
+            $errors[] = 'End-date is empty!';
+        }
+        
+        if(isset($project_image['name']) && imageValidation($project_image['name'])){
+            $data['project_image'] = time().$project_image['name'];
         }
         
         if(isset($certificate_image['name']) && imageValidation($certificate_image['name'])){
@@ -50,13 +65,27 @@
                 $errors = "Something went wrong!";
             }
         }else if(count($errors) > 0){
-            header("Location: index.php?action=update&status=unsuccessfull");
+            $_SESSION['project_errors'] = $errors;
+            header("Location: edit.php?id=$id&action=update&status=unsuccessfull");
         }
     }
     ob_end_flush();
 ?>
 
 <div class="container my-5">
+    <?php if(isset($_GET['action']) && isset($_GET['status'])): ?>
+        <?php if(($_GET['action'] == 'update') && ($_GET['status'] == 'unsuccessfull')): ?>
+            <?php if(isset($_SESSION['project_errors'])): ?>
+                <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                    <?php foreach($_SESSION['project_errors'] as $error): ?>
+                        <p><?php echo $error; ?></p>
+                    <?php endforeach; ?>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+                <?php unset($_SESSION['project_errors']); ?>
+            <?php endif; ?>
+        <?php endif; ?>
+    <?php endif; ?>
     <?php if(isset($certificates) && is_array($certificates[0])): ?>
     <form action="<?= $_SERVER['PHP_SELF'] ?>" method="POST" enctype="multipart/form-data">
         <div class="mb-3">

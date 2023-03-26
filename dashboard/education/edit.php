@@ -31,9 +31,23 @@
             'education_description' => $education_description
         ];
     
-        if(empty($uni_name) || empty($education_major) || 
-            empty($uni_link) || empty($start_date) || empty($graduation_date)){
-            $errors[] = 'Some fields are empty! Fill them with info to proceed...';
+        if(empty($uni_name)){
+            $errors[] = 'University Title is empty!';
+        }
+        if(empty($education_major)){
+            $errors[] = 'Education Major is empty!';
+        }
+        if(empty($start_date)){
+            $errors[] = 'Start-date is empty!';
+        }
+        if(empty($graduation_date)){
+            $errors[] = 'Graduation-date is empty!';
+        }
+        if(empty($uni_link)){
+            $errors[] = 'University link is empty!';
+        }
+        if(filter_var($uni_link, FILTER_VALIDATE_URL) == false){
+            $errors[] = 'Link is invalid!';
         }
         
         if(isset($education_image['name']) && imageValidation($education_image['name'])){
@@ -52,13 +66,27 @@
                 $errors = "Something went wrong!";
             }
         }else if(count($errors) > 0){
-            header("Location: index.php?action=update&status=unsuccessfull");
+            $_SESSION['project_errors'] = $errors;
+            header("Location: edit.php?id=$id&action=update&status=unsuccessfull");
         }
     }
     ob_end_flush();
 ?>
 
 <div class="container my-5">
+    <?php if(isset($_GET['action']) && isset($_GET['status'])): ?>
+        <?php if(($_GET['action'] == 'update') && ($_GET['status'] == 'unsuccessfull')): ?>
+            <?php if(isset($_SESSION['project_errors'])): ?>
+                <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                    <?php foreach($_SESSION['project_errors'] as $error): ?>
+                        <p><?php echo $error; ?></p>
+                    <?php endforeach; ?>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+                <?php unset($_SESSION['project_errors']); ?>
+            <?php endif; ?>
+        <?php endif; ?>
+    <?php endif; ?>
     <?php if(isset($education) && is_array($education[0])): ?>
         <form action="<?= $_SERVER['PHP_SELF'] ?>" method="POST" enctype="multipart/form-data">
             <div class="mb-3">

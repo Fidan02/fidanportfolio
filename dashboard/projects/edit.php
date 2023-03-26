@@ -2,10 +2,11 @@
     ob_start();
     include('../includes/header.php'); 
     include('../../classes/CRUD.php');
-    $errors = [];
     $crud = new CRUD;
+    $errors = [];
     $projects = $crud->read('projects', ['column' => 'id', 'value' => $_GET['id']], 1);
 
+    //Image Validation
     function imageValidation($image){
         $type = end(explode('.', $image));
         $imageTypes = ['png', 'jpg', 'jpeg', 'webp'];
@@ -19,26 +20,37 @@
         $project_desc = $_POST['project_desc'];
         $project_tools = $_POST['project_tools'];
         $github_link = $_POST['github_link'];
-        $website_link = $_POST['website_link'];
         $project_image = $_FILES['project_image'];
         $data = [
             'project_title' => $project_title,
             'project_desc' => $project_desc,
             'project_tools' => $project_tools,
             'github_link' => $github_link,
-            'website_link' => $website_link,
         ];
-    
-        if(empty($project_title) || empty($project_desc) ||
-            empty($project_tools) || empty($github_link)){
-            $errors[] = 'Some fields are empty! Fill them with data to proceed...';
+
+        // Validation
+        if(empty($project_title)){
+            $errors[] = 'Project Title is empty!';
+        }
+        if(empty($project_desc)){
+            $errors[] = 'Project Description is empty!';
+        }
+        if(empty($project_tools)){
+            $errors[] = 'Project Tools is empty!';
+        }
+        if(empty($github_link)){
+            $errors[] = 'Github link is empty!';
+        }
+        if(filter_var($github_link, FILTER_VALIDATE_URL) == false){
+            $errors[] = 'Link is invalid!';
         }
         
         if(isset($project_image['name']) && imageValidation($project_image['name'])){
             $data['project_image'] = time().$project_image['name'];
         }
 
-        if(count($errors) === 0){
+        // Update Section
+        if(count($errors) == 0){
             if($crud->update('projects', $data, ['column' => 'id', 'value' => $id]) === true){
                 if(isset($project_image['name']) && imageValidation($project_image['name'])){
                     if(move_uploaded_file($project_image['tmp_name'], 'images/'.time().$project_image['name'])){
@@ -47,16 +59,30 @@
                 }
                 header('Location: index.php?action=update&status=success');
             }else{
-                $errors = "Something went wrong!";
+                $errors[] = "Something went wrong!";
             }
         }else if(count($errors) > 0){
-            header("Location: index.php?action=update&status=unsuccessfull");
+            $_SESSION['project_errors'] = $errors;
+            header("Location: edit.php?id=$id&action=update&status=unsuccessfull");
         }
     }
     ob_end_flush();
 ?>
 
 <div class="container my-5">
+    <?php if(isset($_GET['action']) && isset($_GET['status'])): ?>
+        <?php if(($_GET['action'] == 'update') && ($_GET['status'] == 'unsuccessfull')): ?>
+            <?php if(isset($_SESSION['project_errors'])): ?>
+                <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                    <?php foreach($_SESSION['project_errors'] as $error): ?>
+                        <p><?php echo $error; ?></p>
+                    <?php endforeach; ?>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+                <?php unset($_SESSION['project_errors']); ?>
+            <?php endif; ?>
+        <?php endif; ?>
+    <?php endif; ?>
 <?php if(isset($projects) && is_array($projects[0])): ?>
     <form action="<?= $_SERVER['PHP_SELF'] ?>" method="POST" enctype="multipart/form-data">
         <div class="mb-3">
@@ -75,10 +101,6 @@
         <div class="mb-3">
             <label for="github_link" class="form-label">Github Link</label>
             <input type="text" class="form-control" id="github_link" name="github_link" value="<?= $projects[0]['github_link'] ?>">
-        </div>
-        <div class="mb-3">
-            <label for="website_link" class="form-label">Website Link</label>
-            <input type="text" class="form-control" id="website_link" name="website_link" value="<?= $projects[0]['website_link'] ?>">
         </div>
         <div class="form-floating mb-3">
             <textarea class="form-control" placeholder="Describe the project here" id="project_desc" name="project_desc"><?= $projects[0]['project_desc'] ?></textarea>

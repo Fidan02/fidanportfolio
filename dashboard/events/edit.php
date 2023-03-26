@@ -28,10 +28,19 @@
             
         ];
     
-        if(empty($event_title) || empty($event_desc) ||
-            empty($start_date) || empty($end_date)){
-            $errors[] = 'Some fields are empty! Fill them with data to proceed...';
+        if(empty($event_title)){
+            $errors[] = 'Event Title is empty!';
         }
+        if(empty(strlen(trim($event_desc)))){
+            $errors[] = 'Event Description is empty!';
+        }
+        if(empty($start_date)){
+            $errors[] = 'Start-date is empty!';
+        }
+        if(empty($end_date)){
+            $errors[] = 'End-date is empty!';
+        }
+        
         
         if(isset($event_image['name']) && imageValidation($event_image['name'])){
             $data['event_image'] = time().$event_image['name'];
@@ -49,13 +58,27 @@
                 $errors = "Something went wrong!";
             }
         }else if(count($errors) > 0){
-            header("Location: index.php?action=update&status=unsuccessfull");
+            $_SESSION['project_errors'] = $errors;
+            header("Location: edit.php?id=$id&action=update&status=unsuccessfull");
         }
     }
     ob_end_flush();
 ?>
 
 <div class="container my-5">
+    <?php if(isset($_GET['action']) && isset($_GET['status'])): ?>
+        <?php if(($_GET['action'] == 'update') && ($_GET['status'] == 'unsuccessfull')): ?>
+            <?php if(isset($_SESSION['project_errors'])): ?>
+                <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                    <?php foreach($_SESSION['project_errors'] as $error): ?>
+                        <p><?php echo $error; ?></p>
+                    <?php endforeach; ?>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+                <?php unset($_SESSION['project_errors']); ?>
+            <?php endif; ?>
+        <?php endif; ?>
+    <?php endif; ?>
     <?php if(isset($events) && is_array($events[0])): ?>
     <form action="<?= $_SERVER['PHP_SELF'] ?>" method="POST" enctype="multipart/form-data">
         <div class="mb-3">

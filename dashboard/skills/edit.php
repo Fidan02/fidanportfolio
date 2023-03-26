@@ -20,19 +20,21 @@
         $skill_image = $_FILES['skill_image'];
         $data = ['skill_title' => $skill_title, 'percentage' => $percentage];
     
-        if(empty($skill_title) || empty($percentage)){
-            $errors[] = 'A field is empty';
+        if(empty($skill_title)){
+            $errors[] = 'Skill Title is empty!';
+        }
+        if(empty($percentage)){
+            $errors[] = 'Percentage is empty!';
         }
         
         if(isset($skill_image['name']) && imageValidation($skill_image['name'])){
             $data['skill_image'] = time().$skill_image['name'];
         }
 
-        if(count($errors) === 0){
+        if(count($errors) == 0){
             if($crud->update('skills', $data, ['column' => 'id', 'value' => $id]) === true){
                 if(isset($skill_image['name']) && imageValidation($skill_image['name'])){
                     if(move_uploaded_file($skill_image['tmp_name'], 'images/'.time().$skill_image['name'])){
-                        die('Test!');
                         unlink('images/'.$skill[0]['skill_image']);
                     }
                 }
@@ -41,23 +43,27 @@
                 $errors = "Something went wrong!";
             }
         }else if(count($errors) > 0){
-            header("Location: edit.php?id=$id");
-            foreach($errors as $error){
-                echo "$error";
-            }
+            $_SESSION['project_errors'] = $errors;
+            header("Location: edit.php?id=$id&action=update&status=unsuccessfull");
         }
     }
     ob_end_flush();
 ?>
 
 <div class="container my-5">
-    <?php if($errors): ?>
-        <ul>
-            <?php foreach($errors as $error): ?>
-            <li> <?= $error; ?></li>
-            <?php endforeach;?>
-        </ul>
-    <?php endif;?>
+    <?php if(isset($_GET['action']) && isset($_GET['status'])): ?>
+        <?php if(($_GET['action'] == 'update') && ($_GET['status'] == 'unsuccessfull')): ?>
+            <?php if(isset($_SESSION['project_errors'])): ?>
+                <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                    <?php foreach($_SESSION['project_errors'] as $error): ?>
+                        <p><?php echo $error; ?></p>
+                    <?php endforeach; ?>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+                <?php unset($_SESSION['project_errors']); ?>
+            <?php endif; ?>
+        <?php endif; ?>
+    <?php endif; ?>
     <?php if(isset($skills) && is_array($skills[0])): ?>
     <form action="<?= $_SERVER['PHP_SELF'] ?>" method="POST" enctype="multipart/form-data">
         <div class="mb-3">

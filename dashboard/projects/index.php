@@ -81,7 +81,6 @@
                             <td class="data-title"><?= $project['project_title']?></td>
                             <td class="data-links">
                                 <a href="<?= $project['github_link']?>" target="_blank"><i class="fa-brands fa-github"></i></a>
-                                <a href="https://<?= $project['website_link']?>" target="_blank"><i class="fa-solid fa-earth-asia"></i></a>
                             </td>
                             <td class="data-tools">
                             <?php foreach(splitTools($project['project_tools']) as $tool): ?>

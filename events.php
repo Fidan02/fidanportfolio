@@ -22,7 +22,6 @@
                         <h5 class="card-title"><?= $event['event_title']?></h5>
                         <p class="card-text desc-scroll"><?= $event['event_desc']?></p>
                         <a href="singleevent.php?id=<?= $event['id']?>" class="btn btn-event">More Info</a>
-                        <span class="text-light ms-3">Likes: <span class="text-danger"><?= $event['event_likes'] ?></span></span>
                     </div>
                 </div>
             <?php endforeach; ?>

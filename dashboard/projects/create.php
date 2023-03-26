@@ -29,10 +29,12 @@
         ];
     
         if(empty($project_title) || empty($project_desc) ||
-        empty($project_tools) || empty($github_link)){
+        empty($project_tools)){
             $errors[] = 'Some fields are empty! Fill them with data to proceed...';
         }
-        
+        if(empty($github_link) && !filter_var($github_link, FILTER_VALIDATE_URL)){
+            $errors[] = 'Link is empty or is invalid';
+        }
         if(empty($project_image['name']) || !imageValidation($project_image['name'])){
             $errors[] = 'Image is empty or type is not supported!';
         }else{
@@ -46,7 +48,7 @@
                 }
                 header('Location: index.php?action=create&status=success');
             }else{
-                $errors = 'Something went wrong!'; 
+                $errors[] = 'Something went wrong!'; 
             }
         }
     }
@@ -79,10 +81,6 @@
         <div class="mb-3">
             <label for="github_link" class="form-label">Github Link</label>
             <input type="text" class="form-control" id="github_link" name="github_link">
-        </div>
-        <div class="mb-3">
-            <label for="website_link" class="form-label">Website Link</label>
-            <input type="text" class="form-control" id="website_link" name="website_link">
         </div>
         <div class="form-floating mb-3">
             <textarea class="form-control" placeholder="Describe the project here" id="project_desc" name="project_desc"></textarea>

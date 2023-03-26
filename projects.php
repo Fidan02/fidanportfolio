@@ -20,7 +20,6 @@
                     <h5 class="card-title"><?= $project['project_title'] ?></h5>
                     <p class="card-text desc-scroll"><?= $project['project_desc'] ?></p>
                     <a href="singleproject.php?id=<?= $project['id'] ?>" class="btn btn-event">More Info</a>
-                    <span class="text-light ms-3">Likes: <span class="text-danger"><?= $project['project_likes'] ?></span></span>
                 </div>
             </div>
             <?php endforeach; ?>

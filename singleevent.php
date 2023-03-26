@@ -37,9 +37,6 @@
                 <div>
                     <p class='secondaryColor desc-width fw-bold'><?= $event[0]['event_desc'] ?></p>
                 </div>
-                <div>
-                    <button class='btn btn-outline secondaryColor fw-bold'>Likes: <?= $event[0]['event_likes'] ?></button>
-                </div>
             </div>
         </div>
     </div>

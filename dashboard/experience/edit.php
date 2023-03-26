@@ -21,25 +21,52 @@
             'end_date' => $end_date,
         ];
     
-        if(empty($experience_title) || empty($company) || 
-            empty($experience_desc) || empty($start_date) || empty($end_date)){
-            $errors[] = 'Some fields are empty! Fill them with info to proceed...';
+        if(empty($experience_title)){
+            $errors[] = 'Experience Title is empty!';
         }
+        if(empty($experience_desc)){
+            $errors[] = 'Experience description is empty!';
+        }
+        if(empty($company)){
+            $errors[] = 'Company name is empty!';
+        }
+        if(empty($start_date)){
+            $errors[] = 'Start-Date is empty!';
+        }
+        if(empty($end_date)){
+            $errors[] = 'End-Date is empty!';
+        }
+        
 
         if(count($errors) === 0){
             if($crud->update('experience', $data, ['column' => 'id', 'value' => $id]) === true){
                 header('Location: index.php?action=update&status=success');
             }else{
-                $errors = "Something went wrong!";
+                $errors[] = "Something went wrong!";
             }
         }else if(count($errors) > 0){
-            header("Location: index.php?action=update&status=unsuccessfull");
+            $_SESSION['exp_erros'] = $errors;
+            header("Location: edit.php?id=$id&action=update&status=unsuccessfull");
         }
     }
     ob_end_flush();
 ?>
 
 <div class="container my-5">
+    <?php if(isset($_GET['action']) && isset($_GET['status'])): ?>
+        <?php if(($_GET['action'] == 'update') && ($_GET['status'] == 'unsuccessfull')): ?>
+            <?php if(isset($_SESSION['exp_erros'])): ?>
+                <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                    <?php foreach($_SESSION['exp_erros'] as $error): ?>
+                        <p><?php echo $error; ?></p>
+                    <?php endforeach; ?>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+                <?php unset($_SESSION['exp_erros']); ?>
+            <?php endif; ?>
+        <?php endif; ?>
+    <?php endif; ?>
+
     <?php if(isset($experience) && is_array($experience[0])): ?>
     <form action="<?php $_SERVER['PHP_SELF'] ?>" method="POST" enctype="multipart/form-data">
         <div class="mb-3">

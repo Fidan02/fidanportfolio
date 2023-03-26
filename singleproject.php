@@ -8,26 +8,26 @@
 
         return $type;
     }
+
     if(isset($_GET['id'])){
         $projects = $crud->read('projects',['column' => 'id', 'value' => $_GET['id']]);
         $comments = $crud->read('comments',['column' => 'project_id', 'value' => $_GET['id']]);
         if(empty($projects)){
             header('Location: projects.php');
-            exit;
         }
     }else {
         header('Location: projects.php');
-        exit;
     }
-    
 
-    if(isset($_POST['post_comment'])){
+
+    if(isset($_POST['post_comment']) && isset($_GET['id'])){
         $comment_desc = $_POST['comment_desc'];
         $user_id = $_SESSION['id'];
+        $project_id = $_GET['id'];
         $data = [
             'comment_desc' => $comment_desc, 
             'user_id' => $user_id, 
-            'project_id' => $projects[0]['id'],
+            'project_id' => $project_id,
         ];
 
         if(empty($comment_desc)){
@@ -35,15 +35,13 @@
         }
 
         if(count($errors) === 0){
-            if($crud->create('comments', $data) === true){
-                header("Location: singleproject.php?id=".$projects[0]['id']."&action=create");
+            if($crud->create('comments', $data) == true){
+                header("Location: singleproject.php?id=".$_GET['id']."&action=create");
             }else{
                 $errors = 'Something went wrong!'; 
             }
         }
     }
-
-    
     ob_end_flush();
 ?>
 
@@ -66,9 +64,6 @@
             <div class="container pr-info">
                 <div>
                     <p class='secondaryColor desc-width fw-bold'><?= $projects[0]['project_desc'] ?></p>
-                </div>
-                <div>
-                    <button class='btn btn-outline secondaryColor fw-bold'>Likes: <?= $projects[0]['project_likes'] ?></button>
                 </div>
             </div>
         </div>
@@ -97,7 +92,7 @@
                     <div class="mb-3 w-50">
                         <input type="text" class="form-control" id="comment_desc" name="comment_desc" placeholder="Post a comment">
                     </div>
-                    <button type="submit" name="post_comment" class="form-control btn w-25 h-25" id="submit">Post</button>
+                    <button type="submit" name="post_comment" class="form-control btn w-25 h-25">Post</button>
                 </form>
             </div>
         <?php else: ?>
