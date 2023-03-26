@@ -6,7 +6,8 @@
     $crud = new CRUD;
 
     function imageValidation($image){
-        $type = end(explode('.', $image));
+        $types = explode('.', $image);
+        $type = end($types);
         $imageTypes = ['png', 'jpg', 'jpeg', 'webp'];
         
         return in_array($type, $imageTypes);

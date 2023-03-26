@@ -51,8 +51,12 @@
                     <?php foreach($testimonials as $index => $testimonial): ?>
                         <div class="carousel-item <?= ($index === 0) ? 'active' : '' ?>">
                             <div class="row">
-                                <div class="col-lg-6 ">
-                                    <img src="./assets/images/about04.png" class="d-block w-100" alt="...">
+                                <div class="col-lg-6 avatar_testimonial_container">
+                                <?php foreach($users as $user):?>
+                                    <?php if($user['id'] === $testimonial['user_id']): ?>
+                                    <img src="dashboard/avatars/<?= $user['avatar_image'] ?>" class="d-block w-100 avatar_testimonial" alt="...">
+                                    <?php endif; ?>
+                                <?php endforeach;?>
                                 </div>
                                 <div class="col-lg-6 ">
                                     <div class=" d-flex flex-column justify-content-center my-5 px-3">

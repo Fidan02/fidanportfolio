@@ -4,6 +4,7 @@
     $personPages = [
         '/fidanportfolio/dashboard/index.php',
         '/fidanportfolio/dashboard/testimonials/index.php',
+        '/fidanportfolio/dashboard/profile.php',
     ];
     $currentPage = $_SERVER['SCRIPT_NAME'];
 

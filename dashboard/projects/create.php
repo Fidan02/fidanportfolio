@@ -6,7 +6,8 @@
     $crud = new CRUD;
 
     function imageValidation($image){
-        $type = end(explode('.', $image));
+        $types = explode('.', $image);
+        $type = end($types);
         $imageTypes = ['png', 'jpg', 'jpeg', 'webp'];
         
         return in_array($type, $imageTypes);
@@ -18,22 +19,23 @@
         $project_desc = $_POST['project_desc'];
         $project_tools = $_POST['project_tools'];
         $github_link = $_POST['github_link'];
-        $website_link = $_POST['website_link'];
         $project_image = $_FILES['project_image'];
         $data = [
             'project_title' => $project_title,
             'project_desc' => $project_desc,
             'project_tools' => $project_tools,
             'github_link' => $github_link,
-            'website_link' => $website_link,
         ];
     
         if(empty($project_title) || empty($project_desc) ||
         empty($project_tools)){
             $errors[] = 'Some fields are empty! Fill them with data to proceed...';
         }
-        if(empty($github_link) && !filter_var($github_link, FILTER_VALIDATE_URL)){
-            $errors[] = 'Link is empty or is invalid';
+        if(empty($github_link)){
+            $errors[] = 'Link is empty!';
+        }
+        if(filter_var($github_link, FILTER_VALIDATE_URL) == false){
+            $errors[] = 'Link is invalid!';
         }
         if(empty($project_image['name']) || !imageValidation($project_image['name'])){
             $errors[] = 'Image is empty or type is not supported!';

@@ -7,7 +7,8 @@
     $skills = $crud->read('skills', ['column' => 'id', 'value' => $_GET['id']], 1);
 
     function imageValidation($image){
-        $type = end(explode('.', $image));
+        $types = explode('.', $image);
+        $type = end($types);
         $imageTypes = ['png', 'jpg', 'jpeg', 'webp'];
         
         return in_array($type, $imageTypes);

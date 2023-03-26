@@ -351,6 +351,14 @@ body{
     flex-direction: column;
     align-items: center;
 }
+.avatar_testimonial_container{
+    height: 400px;
+    overflow: hidden;
+}
+.avatar_testimonial{
+    height: 100%;
+    object-fit: cover;
+}
 .testify-comment{
     color: var(--primary-color);
     font-weight: bold;
