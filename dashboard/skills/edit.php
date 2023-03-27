@@ -27,7 +27,7 @@
         if(empty($percentage)){
             $errors[] = 'Percentage is empty!';
         }
-        
+
         if(isset($skill_image['name']) && imageValidation($skill_image['name'])){
             $data['skill_image'] = time().$skill_image['name'];
         }
@@ -36,7 +36,7 @@
             if($crud->update('skills', $data, ['column' => 'id', 'value' => $id]) === true){
                 if(isset($skill_image['name']) && imageValidation($skill_image['name'])){
                     if(move_uploaded_file($skill_image['tmp_name'], 'images/'.time().$skill_image['name'])){
-                        unlink('images/'.$skill[0]['skill_image']);
+                        unlink('images/'.$skills[0]['skill_image']);
                     }
                 }
                 header('Location: index.php?action=update&status=success');
