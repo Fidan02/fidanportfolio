@@ -20,10 +20,10 @@
     }
 
 
-    if(isset($_POST['post_comment']) && isset($_GET['id'])){
+    if(isset($_POST['post_comment'])){
         $comment_desc = $_POST['comment_desc'];
         $user_id = $_SESSION['id'];
-        $project_id = $_GET['id'];
+        $project_id = $_POST['id'];
         $data = [
             'comment_desc' => $comment_desc, 
             'user_id' => $user_id, 
@@ -36,7 +36,7 @@
 
         if(count($errors) === 0){
             if($crud->create('comments', $data) == true){
-                header("Location: singleproject.php?id=".$_GET['id']."&action=create");
+                header("Location: singleproject.php?id=".$_POST['id']."&action=create");
             }else{
                 $errors = 'Something went wrong!'; 
             }
@@ -92,6 +92,7 @@
                     <div class="mb-3 w-50">
                         <input type="text" class="form-control" id="comment_desc" name="comment_desc" placeholder="Post a comment">
                     </div>
+                    <input type="hidden" name="id" value="<?= $projects[0]['id']?>"> 
                     <button type="submit" name="post_comment" class="form-control btn w-25 h-25">Post</button>
                 </form>
             </div>

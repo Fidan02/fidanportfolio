@@ -31,7 +31,7 @@
         if(isset($skill_image['name']) && imageValidation($skill_image['name'])){
             $data['skill_image'] = time().$skill_image['name'];
         }
-
+        $skills = $crud->read('skills', ['column' => 'id', 'value' => $_POST['id']], 1);
         if(count($errors) == 0){
             if($crud->update('skills', $data, ['column' => 'id', 'value' => $id]) === true){
                 if(isset($skill_image['name']) && imageValidation($skill_image['name'])){
